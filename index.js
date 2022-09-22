@@ -16,7 +16,24 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        console.log('DB Connected');
+        const contactsCollection = client.db('rahib_contacts').collection('contacts');
+
+        app.get('/contacts', async (req, res) => {
+            const allContacts = await contactsCollection.find().toArray();
+            res.send(allContacts);
+        })
+
+        app.put('/contacts/:email', async (req, res) => {
+            const email = req.params.email;
+            const newContact = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: newContact,
+            };
+            const result = await contactsCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
     }
     finally {
 
