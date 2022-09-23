@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const ObjectId = require('mongodb').ObjectId;
 
 const port = process.env.PORT || 5000;
 
@@ -33,6 +34,13 @@ async function run() {
             };
             const result = await contactsCollection.updateOne(filter, updateDoc, options);
             res.send(result);
+        })
+
+        app.get('/contactDetails/:_id', async (req, res) => {
+            const _id = req.params._id
+            const query = { _id: ObjectId(_id) }
+            const tool = await contactsCollection.findOne(query)
+            res.send(tool)
         })
     }
     finally {
