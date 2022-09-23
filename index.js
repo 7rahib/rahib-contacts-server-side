@@ -42,6 +42,14 @@ async function run() {
             const tool = await contactsCollection.findOne(query)
             res.send(tool)
         })
+
+        app.delete('/contacts/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const filter = { _id: ObjectId(_id) };
+            const result = await contactsCollection.deleteOne(filter);
+            res.send(result);
+        })
+
     }
     finally {
 
