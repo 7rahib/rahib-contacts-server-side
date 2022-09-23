@@ -50,6 +50,16 @@ async function run() {
             res.send(result);
         })
 
+        app.put('/contacts/fav/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const filter = { _id: ObjectId(_id) };
+            const updateDoc = {
+                $set: { role: 'fav' },
+            };
+            const result = await contactsCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
     }
     finally {
 
