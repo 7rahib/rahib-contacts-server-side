@@ -91,6 +91,14 @@ async function run() {
             res.send(allTrash);
         })
 
+        // Permanet Deleting trashed single contact based on id
+        app.delete('/contact/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const filter = { _id: ObjectId(_id) };
+            const result = await trashCollection.deleteOne(filter);
+            res.send(result);
+        })
+
         // Trash Ends
 
 
