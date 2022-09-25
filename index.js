@@ -17,8 +17,14 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
+
+        // All Collections
         const contactsCollection = client.db('rahib_contacts').collection('contacts');
         const usersCollection = client.db('rahib_contacts').collection('users');
+        const trashCollection = client.db('rahib_contacts').collection('trash_contacts');
+
+
+        // Contact Starts
 
         // All contact information
         app.get('/contacts', async (req, res) => {
@@ -39,6 +45,57 @@ async function run() {
             res.send(result);
         })
 
+        // Updating contact based on id
+        app.put('/updateContacts/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const updateContact = req.body;
+            const filter = { _id: ObjectId(_id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: updateContact,
+            };
+            const result = await contactsCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
+
+        // Delete single contact based on id
+        app.delete('/contacts/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const filter = { _id: ObjectId(_id) };
+            const result = await contactsCollection.deleteOne(filter);
+            res.send(result);
+        })
+
+
+        // Contact Ends
+
+
+        // Trash Starts
+
+        // Storing deleted contacts to trash
+        app.put('/contact/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const newTrash = req.body;
+            const filter = { _id: ObjectId(_id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: newTrash,
+            };
+            const result = await trashCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
+
+        // All Trash information
+        app.get('/contact', async (req, res) => {
+            const allTrash = await trashCollection.find().toArray();
+            res.send(allTrash);
+        })
+
+        // Trash Ends
+
+
+        // User Starts
+
         // Creating new user if there is no similar
         app.put('/users/:email', async (req, res) => {
             const email = req.params.email;
@@ -58,18 +115,7 @@ async function run() {
             res.send(allUsers);
         })
 
-        // Updating contact based on id
-        app.put('/updateContacts/:_id', async (req, res) => {
-            const _id = req.params._id;
-            const updateContact = req.body;
-            const filter = { _id: ObjectId(_id) }
-            const options = { upsert: true };
-            const updateDoc = {
-                $set: updateContact,
-            };
-            const result = await contactsCollection.updateOne(filter, updateDoc, options);
-            res.send(result);
-        })
+        // User Ends
 
         // Getting individual contact information
         app.get('/contactDetails/:_id', async (req, res) => {
@@ -79,18 +125,13 @@ async function run() {
             res.send(contacts)
         })
 
+
+        // Starred Contact Start
+
         // Getting starred contact information
         app.get('/starContact', async (req, res) => {
             const contacts = await contactsCollection.find({ role: 'fav' }).toArray();
             res.send(contacts)
-        })
-
-        // Delete single contact based on id
-        app.delete('/contacts/:_id', async (req, res) => {
-            const _id = req.params._id;
-            const filter = { _id: ObjectId(_id) };
-            const result = await contactsCollection.deleteOne(filter);
-            res.send(result);
         })
 
         // Adding fav role to a contact
@@ -115,6 +156,10 @@ async function run() {
             res.send(result);
         })
 
+        // Starred Contact End
+
+        // Frequent Starts
+
         // Adding count to a contact to check frequent
         app.put('/contacts/count/:_id', async (req, res) => {
             const _id = req.params._id;
@@ -129,6 +174,8 @@ async function run() {
             res.send(result);
         })
 
+
+        // Frequent Ends
     }
     finally {
 
