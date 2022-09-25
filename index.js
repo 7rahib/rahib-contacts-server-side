@@ -36,6 +36,18 @@ async function run() {
             res.send(result);
         })
 
+        app.put('/updateContacts/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const updateContact = req.body;
+            const filter = { _id: ObjectId(_id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: updateContact,
+            };
+            const result = await contactsCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
+
         app.get('/contactDetails/:_id', async (req, res) => {
             const _id = req.params._id
             const query = { _id: ObjectId(_id) }
