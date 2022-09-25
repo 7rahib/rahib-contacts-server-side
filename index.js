@@ -18,6 +18,7 @@ async function run() {
     try {
         await client.connect();
         const contactsCollection = client.db('rahib_contacts').collection('contacts');
+        const usersCollection = client.db('rahib_contacts').collection('users');
 
         // All contact information
         app.get('/contacts', async (req, res) => {
@@ -36,6 +37,25 @@ async function run() {
             };
             const result = await contactsCollection.updateOne(filter, updateDoc, options);
             res.send(result);
+        })
+
+        // Creating new user if there is no similar
+        app.put('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const newUser = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: newUser,
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
+
+        // Getting all user data
+        app.get('/users', async (req, res) => {
+            const allUsers = await usersCollection.find().toArray();
+            res.send(allUsers);
         })
 
         // Updating contact based on id
