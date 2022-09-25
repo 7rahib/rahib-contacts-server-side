@@ -19,11 +19,13 @@ async function run() {
         await client.connect();
         const contactsCollection = client.db('rahib_contacts').collection('contacts');
 
+        // All contact information
         app.get('/contacts', async (req, res) => {
             const allContacts = await contactsCollection.find().toArray();
             res.send(allContacts);
         })
 
+        // Adding new contact if there is no similar
         app.put('/contacts/:email', async (req, res) => {
             const email = req.params.email;
             const newContact = req.body;
@@ -36,6 +38,7 @@ async function run() {
             res.send(result);
         })
 
+        // Updating contact based on id
         app.put('/updateContacts/:_id', async (req, res) => {
             const _id = req.params._id;
             const updateContact = req.body;
@@ -48,6 +51,7 @@ async function run() {
             res.send(result);
         })
 
+        // Getting individual contact information
         app.get('/contactDetails/:_id', async (req, res) => {
             const _id = req.params._id
             const query = { _id: ObjectId(_id) }
@@ -55,6 +59,7 @@ async function run() {
             res.send(tool)
         })
 
+        // Delete single contact based on id
         app.delete('/contacts/:_id', async (req, res) => {
             const _id = req.params._id;
             const filter = { _id: ObjectId(_id) };
@@ -62,6 +67,7 @@ async function run() {
             res.send(result);
         })
 
+        // Adding fav role to a contact
         app.put('/contacts/fav/:_id', async (req, res) => {
             const _id = req.params._id;
             const filter = { _id: ObjectId(_id) };
@@ -72,6 +78,18 @@ async function run() {
             res.send(result);
         })
 
+        // Removing fav role from a contact
+        app.put('/contacts/removeFav/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const filter = { _id: ObjectId(_id) };
+            const updateDoc = {
+                $set: { role: '' },
+            };
+            const result = await contactsCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
+        // Adding count to a contact to check frequent
         app.put('/contacts/count/:_id', async (req, res) => {
             const _id = req.params._id;
             let count = 0;
