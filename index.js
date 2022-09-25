@@ -55,8 +55,14 @@ async function run() {
         app.get('/contactDetails/:_id', async (req, res) => {
             const _id = req.params._id
             const query = { _id: ObjectId(_id) }
-            const tool = await contactsCollection.findOne(query)
-            res.send(tool)
+            const contacts = await contactsCollection.findOne(query)
+            res.send(contacts)
+        })
+
+        // Getting starred contact information
+        app.get('/starContact', async (req, res) => {
+            const contacts = await contactsCollection.find({ role: 'fav' }).toArray();
+            res.send(contacts)
         })
 
         // Delete single contact based on id
