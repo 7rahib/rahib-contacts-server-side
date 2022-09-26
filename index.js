@@ -123,6 +123,26 @@ async function run() {
             res.send(allUsers);
         })
 
+        // Getting individual user information
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email };
+            const users = await usersCollection.findOne(query)
+            res.send(users)
+        })
+
+        // Updating contact based on id
+        app.put('/users/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const newUserUpdate = req.body;
+            const filter = { _id: ObjectId(_id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: newUserUpdate,
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
         // User Ends
 
         // Getting individual contact information
