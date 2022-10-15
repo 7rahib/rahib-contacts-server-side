@@ -216,6 +216,20 @@ async function run() {
             res.send(result);
         });
 
+        // Fetch All Label list
+        app.get("/labels", async (req, res) => {
+            const result = await labelCollection.find().toArray();
+            res.send(result);
+        });
+
+
+        // Deleting Specific Label
+        app.delete("/label/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await labelCollection.deleteOne(query);
+            res.send(result);
+        });
 
         // Label Ends
     }
