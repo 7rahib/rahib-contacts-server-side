@@ -22,6 +22,7 @@ async function run() {
         const contactsCollection = client.db('rahib_contacts').collection('contacts');
         const usersCollection = client.db('rahib_contacts').collection('users');
         const trashCollection = client.db('rahib_contacts').collection('trash_contacts');
+        const labelCollection = client.db('rahib_contacts').collection('labels');
 
 
         // Contact Starts
@@ -204,6 +205,19 @@ async function run() {
 
 
         // Frequent Ends
+
+
+        // Label Starts
+
+        // Adding new labels
+        app.post("/label", async (req, res) => {
+            const query = req.body;
+            const result = await labelCollection.insertOne(query);
+            res.send(result);
+        });
+
+
+        // Label Ends
     }
     finally {
 
